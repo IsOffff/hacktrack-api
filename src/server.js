@@ -12,7 +12,7 @@ app.use(express.json());
 
 app.use('/auth', authRoutes);
 app.use('/hackathons', authMiddleware, hackathonRoutes);
-app.use('/teams', authMiddleware, teamRoutes);
+app.use('/teams', teamRoutes);
 
 app.get(
   '/docs',

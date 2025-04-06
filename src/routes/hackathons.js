@@ -27,4 +27,54 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.get('/:id', async (req, res) => {
+  const id = parseInt(req.params.id);
+
+  try {
+    const hackathon = await prisma.hackathon.findUnique({
+      where: { id },
+      include: {
+        teams: {
+          include: {
+            members: true,
+          },
+        },
+      },
+    });
+
+    if (!hackathon) {
+      return res.status(404).json({ message: 'Hackathon not found' });
+    }
+
+    res.json(hackathon);
+  } catch (error) {
+    console.error('Erreur GET /hackathons/:id', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+router.get('/', async (req, res) => {
+  const page = parseInt(req.query.page) || 1;  
+  const pageSize = 5;  
+
+  try {
+    const hackathons = await prisma.hackathon.findMany({
+      skip: (page - 1) * pageSize, 
+      take: pageSize,            
+      orderBy: { date: 'asc' },    
+    });
+
+    const totalCount = await prisma.hackathon.count(); 
+    res.json({
+      hackathons,
+      totalCount,
+      page,
+      totalPages: Math.ceil(totalCount / pageSize),
+    });
+  } catch (err) {
+    console.error('Erreur pagination hackathons :', err);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+
 module.exports = router;
