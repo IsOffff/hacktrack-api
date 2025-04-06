@@ -21,7 +21,8 @@ router.post('/register', registerValidation, async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { email, password, name } = req.body;
+  const email = req.body.email.trim().toLowerCase();
+  const { password, name } = req.body;
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -41,10 +42,11 @@ router.post('/register', registerValidation, async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+  const email = req.body.email.trim().toLowerCase();
+  const { password } = req.body;
 
   try {
-    console.log("📨 Tentative de connexion avec :", email);
+    console.log("Tentative de connexion avec :", email);
     const user = await prisma.user.findUnique({ where: { email } });
     console.log('🔍 Utilisateur trouvé :', user);
 
@@ -89,7 +91,7 @@ router.get('/me', async (req, res) => {
 
     res.json({ id: user.id, name: user.name, email: user.email });
   } catch (error) {
-    console.error('Erreur dans /auth/me :', error);
+    console.error(' Erreur dans /auth/me :', error);
     res.status(403).json({ message: 'Invalid token' });
   }
 });

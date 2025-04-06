@@ -67,7 +67,7 @@ router.post('/:teamId/join', authenticate, async (req, res) => {
       }
     });
 
-    res.json({ message: 'Rejoint avec succès ✅' });
+    res.json({ message: 'Rejoint avec succès ' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Erreur lors de l'ajout dans l'équipe" });
